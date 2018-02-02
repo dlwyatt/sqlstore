@@ -14,9 +14,11 @@ import (
 
 // SQLStore stores gorilla sessions in a database.
 type SQLStore struct {
-	Options *sessions.Options
-	codecs  []securecookie.Codec
-	db      *sql.DB
+	// MaxSessionAge controls when the session will be timed out based on the DB contents.  Options.MaxAge sets the cookie expiration for the browser.
+	MaxSessionAge int
+	Options       *sessions.Options
+	codecs        []securecookie.Codec
+	db            *sql.DB
 }
 
 // New returns a new SQLStore. The keyPairs are used in the same way as the
@@ -27,8 +29,9 @@ func New(db *sql.DB, keyPairs ...[]byte) *SQLStore {
 			Path:   "/",
 			MaxAge: 86400 * 30,
 		},
-		codecs: securecookie.CodecsFromPairs(keyPairs...),
-		db:     db,
+		MaxSessionAge: 86400 * 30,
+		codecs:        securecookie.CodecsFromPairs(keyPairs...),
+		db:            db,
 	}
 }
 
